@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>첫 런칭을 위한 30일 챌린지</title>
+<meta name="description" content="첫 런칭을 준비하는 1인 창업자를 위한 30일 콘텐츠 구조 설계 챌린지">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --bg-alt:#F7F7F5;
+    --border:#E4E3DF;
+    --border-strong:#CFCECA;
+    --text:#141414;
+    --text-secondary:#6B6A66;
+    --text-muted:#9B9A96;
+    --invert-bg:#141414;
+    --invert-text:#F7F7F5;
+    --accent:#B8622E;
+    --accent-bg:#FBF1EA;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter',sans-serif;
+    color:var(--text);
+    background:var(--bg);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:500;letter-spacing:-0.01em;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 32px;}
+
+  /* nav */
+  nav{
+    position:sticky;top:0;z-index:10;
+    background:rgba(255,255,255,0.9);
+    backdrop-filter:blur(6px);
+    border-bottom:0.5px solid var(--border);
+  }
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;letter-spacing:-0.02em;display:flex;align-items:center;gap:10px;color:var(--text-secondary);}
+  .logo img{height:28px;display:block;}
+  .nav-links{display:flex;align-items:center;gap:32px;font-size:14px;color:var(--text-secondary);}
+  .nav-links a:not(.btn):hover{color:var(--text);}
+
+  /* buttons — hover/focus/active/disabled 전부 구현 */
+  .btn{
+    display:inline-block;padding:12px 22px;font-size:14px;font-weight:500;
+    border-radius:6px;border:0.5px solid var(--border-strong);
+    transition:background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+    cursor:pointer;
+  }
+  .btn-primary{background:var(--text);color:#fff;border-color:var(--text);}
+  .btn-primary:hover{background:#000;}
+  .btn-primary:focus-visible{outline:none;box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--text);}
+  .btn-primary:active{transform:scale(0.98);}
+  .btn-primary:disabled{opacity:0.5;cursor:not-allowed;background:var(--text);}
+  .btn-secondary{background:transparent;color:var(--text);}
+  .btn-secondary:hover{background:var(--bg-alt);}
+  .btn-secondary:focus-visible{outline:none;box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--border-strong);}
+  .btn-secondary:active{transform:scale(0.98);}
+  .btn-secondary:disabled{opacity:0.5;cursor:not-allowed;}
+  .btn-block{display:block;width:100%;text-align:center;}
+
+  /* hero */
+  .hero{padding:96px 0 80px;border-top:none;}
+  .eyebrow{
+    font-size:12px;color:var(--text-muted);
+    letter-spacing:0.04em;margin-bottom:24px;display:block;
+  }
+  .hero h1{
+    font-size:48px;line-height:1.18;letter-spacing:-0.02em;
+    max-width:680px;
+  }
+  .hero p.sub{
+    margin-top:24px;font-size:17px;color:var(--text-secondary);
+    max-width:520px;
+  }
+  .cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:40px;}
+
+  /* flow strip */
+  .flow{
+    margin-top:72px;
+    border:0.5px solid var(--border);border-radius:8px;
+    overflow:hidden;
+  }
+  .flow-row{display:flex;flex-wrap:wrap;}
+  .flow-step{
+    flex:1;min-width:220px;
+    padding:22px 24px;
+    border-right:0.5px solid var(--border);
+    background:var(--bg-alt);
+  }
+  .flow-step:last-child{border-right:none;}
+  .flow-tag{font-size:11px;color:var(--text-muted);letter-spacing:0.05em;}
+  .flow-title{font-size:15px;font-weight:500;margin-top:8px;}
+  .flow-desc{font-size:13px;color:var(--text-secondary);margin-top:4px;}
+
+  /* section base */
+  section{padding:80px 0;border-top:0.5px solid var(--border);}
+  .section-eyebrow{font-size:12px;color:var(--text-muted);letter-spacing:0.04em;margin-bottom:16px;}
+  .section-title{font-size:28px;max-width:560px;}
+  .section-sub{margin-top:16px;font-size:16px;color:var(--text-secondary);max-width:520px;}
+
+  /* pain list */
+  .pain-list{list-style:none;margin-top:40px;display:grid;gap:1px;background:var(--border);border:0.5px solid var(--border);border-radius:8px;overflow:hidden;}
+  .pain-list li{background:#fff;display:flex;gap:14px;padding:20px 24px;font-size:15px;color:var(--text-secondary);}
+  .pain-list .mark{color:var(--text-muted);font-family:'IBM Plex Mono',monospace;flex-shrink:0;}
+
+  /* origin story */
+  .story-grid{display:grid;grid-template-columns:200px 1fr;gap:56px;margin-top:48px;align-items:start;}
+  .story-mark{width:200px;height:200px;border-radius:8px;background:var(--text);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:500;text-align:center;padding:20px;line-height:1.5;}
+  .story-steps{display:flex;flex-direction:column;gap:24px;}
+  .story-step{padding-left:20px;border-left:2px solid var(--border-strong);}
+  .story-step .stag{font-size:11px;color:var(--text-muted);letter-spacing:0.05em;}
+  .story-step p{font-size:15px;color:var(--text-secondary);margin-top:6px;max-width:520px;}
+
+  /* card grid */
+  .card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-top:48px;border:0.5px solid var(--border);border-radius:8px;overflow:hidden;}
+  .card{background:#fff;padding:32px 28px;}
+  .card .tag{font-size:11px;color:var(--text-muted);letter-spacing:0.05em;}
+  .card h3{font-size:19px;margin-top:14px;}
+  .card p{font-size:14px;color:var(--text-secondary);margin-top:10px;}
+
+  /* offer */
+  .offer-box{margin-top:48px;border:0.5px solid var(--border-strong);border-radius:10px;overflow:hidden;}
+  .offer-head{background:var(--text);color:#fff;padding:28px 32px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;}
+  .offer-head .name{font-family:'Space Grotesk',sans-serif;font-size:20px;}
+  .offer-head .price{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;}
+  .offer-body{padding:28px 32px;background:#fff;}
+  .offer-list{list-style:none;}
+  .offer-list li{display:flex;gap:12px;font-size:15px;color:var(--text-secondary);padding:14px 0;border-top:0.5px solid var(--border);}
+  .offer-list li:first-child{border-top:none;}
+  .offer-list .plus{color:var(--accent);font-family:'IBM Plex Mono',monospace;flex-shrink:0;}
+  .offer-list b{color:var(--text);font-weight:600;}
+  .scarcity{margin-top:20px;padding:14px 18px;background:var(--accent-bg);border-radius:6px;font-size:13px;color:var(--accent);font-family:'IBM Plex Mono',monospace;}
+
+  /* guarantee */
+  .guarantee{margin-top:32px;border:0.5px solid var(--border-strong);border-radius:10px;padding:32px;display:flex;gap:20px;align-items:flex-start;background:var(--bg-alt);}
+  .guarantee .badge{flex-shrink:0;width:56px;height:56px;border-radius:50%;background:var(--text);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;text-align:center;line-height:1.2;}
+  .guarantee h3{font-size:18px;}
+  .guarantee p{font-size:14px;color:var(--text-secondary);margin-top:6px;max-width:460px;}
+
+  /* faq */
+  .faq{margin-top:40px;border-top:0.5px solid var(--border);}
+  .faq-item{border-bottom:0.5px solid var(--border);padding:22px 0;}
+  .faq-item summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;font-size:16px;font-weight:500;}
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item summary .q-mark{font-family:'IBM Plex Mono',monospace;color:var(--text-muted);font-size:14px;}
+  .faq-item p{margin-top:14px;font-size:14px;color:var(--text-secondary);max-width:600px;}
+
+  /* final cta */
+  .final-cta{background:var(--invert-bg);color:var(--invert-text);border-top:none;text-align:center;}
+  .final-cta .section-eyebrow{color:#8A8985;}
+  .final-cta .section-title{color:#fff;max-width:640px;margin:0 auto;}
+  .final-cta p.sub{color:#A6A5A0;font-size:16px;margin-top:16px;max-width:480px;margin-left:auto;margin-right:auto;}
+  .final-cta .cta-row{justify-content:center;margin-top:36px;}
+  .final-cta .btn-primary{background:#fff;color:var(--text);border-color:#fff;}
+  .final-cta .btn-primary:hover{background:#eee;}
+  .final-cta .btn-secondary{border-color:#3A3A38;color:#fff;}
+  .final-cta .btn-secondary:hover{background:#1F1F1D;}
+
+  /* consultation form */
+  .form-box{margin-top:48px;border:0.5px solid var(--border);border-radius:10px;padding:40px;background:var(--bg-alt);}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .field{margin-bottom:20px;}
+  .field.full{grid-column:1 / -1;}
+  .field label{display:block;font-size:13px;font-weight:500;margin-bottom:8px;}
+  .field input,.field textarea{
+    width:100%;padding:12px 14px;font-size:14px;font-family:'Inter',sans-serif;
+    border:0.5px solid var(--border-strong);border-radius:6px;background:#fff;color:var(--text);
+    transition:border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .field input:focus,.field textarea:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px rgba(20,20,20,0.08);}
+  .field textarea{resize:vertical;min-height:88px;}
+  #consultation-success{display:none;margin-top:24px;padding:18px 20px;background:#EFF7EE;border:0.5px solid #BFE0BC;border-radius:8px;font-size:14px;color:#2E6B2A;}
+  #consultation-error{display:none;margin-top:24px;padding:18px 20px;background:#FBEDEA;border:0.5px solid #EFC0B5;border-radius:8px;font-size:14px;color:#A13C24;}
+
+  /* ps */
+  .ps{padding:48px 0;border-top:0.5px solid var(--border);}
+  .ps p{font-size:14px;color:var(--text-secondary);font-style:italic;max-width:560px;}
+
+  footer{padding:32px 0;}
+  footer .wrap{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-muted);flex-wrap:wrap;gap:8px;}
+
+  @media (max-width:720px){
+    .hero h1{font-size:32px;}
+    .story-grid{grid-template-columns:1fr;}
+    .story-mark{width:100px;height:100px;font-size:11px;}
+    .card-grid{grid-template-columns:1fr;}
+    .nav-links a:not(.btn){display:none;}
+    .form-grid{grid-template-columns:1fr;}
+    .offer-head{flex-direction:column;align-items:flex-start;}
+    .guarantee{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="logo">
+      <!-- brand_logo 폴더에 이미지 로고 파일을 넣으면 아래 텍스트를 <img>로 교체하세요 -->
+      <span>OntheWay</span>
+    </div>
+    <div class="nav-links">
+      <a href="#curriculum">커리큘럼</a>
+      <a href="#offer">가격/혜택</a>
+      <a href="#faq">FAQ</a>
+      <a class="btn btn-primary" href="#offer">신청하기</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow mono">// 30-DAY CHALLENGE</span>
+    <h1>무엇부터 써야 할지 몰라<br>멈춰 있다면, 여기서 시작하세요</h1>
+    <p class="sub">첫 런칭을 준비하는 1인 창업자를 위한 콘텐츠 구조 설계 챌린지. 하루 하나씩, 생각이 아니라 구조부터 채워갑니다.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#" target="_blank" rel="noopener"><!-- TODO: 결제 페이지 URL 연결 --> 지금 바로 시작하기</a>
+      <a class="btn btn-secondary" href="#consultation-form">무료 상담 신청</a>
+    </div>
+
+    <div class="flow" id="curriculum">
+      <div class="flow-row">
+        <div class="flow-step">
+          <div class="flow-tag mono">WEEK 1</div>
+          <div class="flow-title">구조 설계</div>
+          <div class="flow-desc">콘텐츠의 뼈대부터 세웁니다</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-tag mono">WEEK 2-3</div>
+          <div class="flow-title">매일 채우기</div>
+          <div class="flow-desc">정해진 순서대로 하나씩 채워갑니다</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-tag mono">WEEK 4</div>
+          <div class="flow-title">완성 &amp; 발행 준비</div>
+          <div class="flow-desc">완성된 구조로 발행을 준비합니다</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pain">
+  <div class="wrap">
+    <div class="section-eyebrow mono">// FOR YOU</div>
+    <h2 class="section-title">이런 고민, 있으신가요?</h2>
+    <ul class="pain-list">
+      <li><span class="mark">01</span>콘텐츠는 써야 하는데, 뭐부터 시작해야 할지 모르겠다</li>
+      <li><span class="mark">02</span>생각은 많은데 정리가 안 돼서 발행을 자꾸 미루게 된다</li>
+      <li><span class="mark">03</span>혼자 하다 보니 이 방향이 맞는 건지 확신이 없다</li>
+      <li><span class="mark">04</span>끝까지 완주할 수 있을지, 이번에도 흐지부지될까 봐 불안하다</li>
+    </ul>
+  </div>
+</section>
+
+<section id="story">
+  <div class="wrap">
+    <div class="section-eyebrow mono">// WHY THIS CHALLENGE</div>
+    <h2 class="section-title">생각보다 어렵지 않습니다.<br>순서만 있으면 됩니다.</h2>
+    <div class="story-grid">
+      <div class="story-mark">BEFORE<br>→<br>AFTER</div>
+      <div class="story-steps">
+        <div class="story-step">
+          <div class="stag mono">BEFORE</div>
+          <p>콘텐츠와 브랜드를 처음 시작할 때, 무엇부터 손대야 할지 몰라 이것저것 시도만 하며 시간을 흘려보냈습니다.</p>
+        </div>
+        <div class="story-step">
+          <div class="stag mono">STRUGGLE</div>
+          <p>콘텐츠는 쌓이는데 구조가 없어 제대로 전달되지 않았고, 확신 없이 발행하는 일에 점점 지쳐갔습니다.</p>
+        </div>
+        <div class="story-step">
+          <div class="stag mono">TURNING POINT</div>
+          <p>콘텐츠보다 구조를 먼저 세우고, 30일 단위로 실행하는 방식으로 바꾸자 비로소 방향이 또렷해졌습니다.</p>
+        </div>
+        <div class="story-step">
+          <div class="stag mono">AFTER</div>
+          <p>이 구조를 바탕으로 콘텐츠를 체계적으로 쌓게 되었고, 같은 고민을 하는 1인 창업자들과 이 방법을 나누고자 이 챌린지를 만들었습니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="benefits">
+  <div class="wrap">
+    <div class="section-eyebrow mono">// WHAT YOU GET</div>
+    <h2 class="section-title">세 가지 축으로<br>구조를 완성합니다.</h2>
+    <div class="card-grid">
+      <div class="card">
+        <div class="tag mono">STRUCTURE</div>
+        <h3>콘텐츠 구조 설계</h3>
+        <p>30일 동안 매일 정해진 순서로 콘텐츠의 뼈대를 채워갑니다.</p>
+      </div>
+      <div class="card">
+        <div class="tag mono">COMMUNITY</div>
+        <h3>함께 완주하는 커뮤니티</h3>
+        <p>비공개 커뮤니티에서 매일 인증하고 서로 피드백을 주고받습니다.</p>
+      </div>
+      <div class="card">
+        <div class="tag mono">FEEDBACK</div>
+        <h3>1:1 피드백</h3>
+        <p>챌린지 종료 후, 완성된 구조를 1:1로 점검받습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="offer">
+  <div class="wrap">
+    <div class="section-eyebrow mono">// OFFER</div>
+    <h2 class="section-title">지금 시작하면<br>받게 되는 것들</h2>
+    <div class="offer-box">
+      <div class="offer-head">
+        <span class="name mono">첫 런칭을 위한 30일 챌린지</span>
+        <span class="price">200,000원</span>
+      </div>
+      <div class="offer-body">
+        <ul class="offer-list">
+          <li><span class="plus">+</span><span><b>30일 콘텐츠 구조 챌린지</b> 본 프로그램</span></li>
+          <li><span class="plus">+</span><span><b>콘텐츠 구조 템플릿</b> (노션/PDF 제공)</span></li>
+          <li><span class="plus">+</span><span><b>30일 실행 체크리스트</b></span></li>
+          <li><span class="plus">+</span><span><b>비공개 커뮤니티</b> 참여권</span></li>
+          <li><span class="plus">+</span><span>챌린지 종료 후 <b>1:1 피드백 1회</b></span></li>
+        </ul>
+        <div class="scarcity">이번 기수는 선착순 30명 한정으로 진행됩니다</div>
+      </div>
+    </div>
+
+    <div class="guarantee">
+      <div class="badge">7일<br>보장</div>
+      <div>
+        <h3>7일 무조건 환불 보장</h3>
+        <p>참여 시작 후 7일 이내라면 이유를 묻지 않고 100% 환불해드립니다. 확신이 서지 않으면 부담 없이 시작해보세요.</p>
+      </div>
+    </div>
+
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#" target="_blank" rel="noopener"><!-- TODO: 결제 페이지 URL 연결 --> 지금 바로 시작하기</a>
+      <a class="btn btn-secondary" href="#consultation-form">무료 상담 먼저 받아보기</a>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="section-eyebrow mono">// FAQ</div>
+    <h2 class="section-title">자주 묻는 질문</h2>
+    <div class="faq">
+      <details class="faq-item">
+        <summary>콘텐츠 경험이 전혀 없어도 괜찮나요? <span class="q-mark mono">Q1</span></summary>
+        <p>네, 괜찮습니다. 구조부터 함께 잡아가는 챌린지이기 때문에 처음 시작하시는 분도 어렵지 않게 따라오실 수 있습니다.</p>
+      </details>
+      <details class="faq-item">
+        <summary>매일 얼마나 시간을 투자해야 하나요? <span class="q-mark mono">Q2</span></summary>
+        <p>하루 30분~1시간이면 충분합니다. 정해진 순서를 따라가기만 하면 되도록 설계했습니다.</p>
+      </details>
+      <details class="faq-item">
+        <summary>끝까지 완주하지 못하면 어떡하죠? <span class="q-mark mono">Q3</span></summary>
+        <p>비공개 커뮤니티와 실행 체크리스트가 완주를 돕습니다. 그래도 맞지 않는다면 7일 이내 100% 환불해드립니다.</p>
+      </details>
+      <details class="faq-item">
+        <summary>환불은 어떻게 받을 수 있나요? <span class="q-mark mono">Q4</span></summary>
+        <p>참여 시작일로부터 7일 이내 요청하시면 별도 조건 없이 전액 환불해드립니다.</p>
+      </details>
+      <details class="faq-item">
+        <summary>선착순이 마감되면 참여할 수 없나요? <span class="q-mark mono">Q5</span></summary>
+        <p>이번 기수는 30명 한정으로 진행됩니다. 마감 이후에는 다음 기수 오픈 알림을 무료 상담 신청을 통해 받아보실 수 있습니다.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="wrap">
+    <div class="section-eyebrow mono">// START NOW</div>
+    <h2 class="section-title">이번에는, 구조부터<br>제대로 잡아보세요</h2>
+    <p class="sub">30일 후, 여전히 같은 고민을 하고 있을지 아니면 완성된 구조를 가지고 있을지는 지금 결정됩니다.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#" target="_blank" rel="noopener"><!-- TODO: 결제 페이지 URL 연결 --> 지금 바로 시작하기</a>
+      <a class="btn btn-secondary" href="#consultation-form">무료 상담 신청</a>
+    </div>
+  </div>
+</section>
+
+<section id="consultation-form">
+  <div class="wrap">
+    <div class="section-eyebrow mono">// FREE CONSULTATION</div>
+    <h2 class="section-title">시작하기 전, 먼저<br>물어보고 싶으신가요?</h2>
+    <p class="section-sub">간단한 정보를 남겨주시면, 상황에 맞는 안내를 드립니다.</p>
+
+    <form class="form-box" id="consultationForm">
+      <div class="form-grid">
+        <div class="field">
+          <label for="name">이름</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+        <div class="field">
+          <label for="phone">연락처</label>
+          <input type="tel" id="phone" name="phone" required>
+        </div>
+        <div class="field full">
+          <label for="email">이메일</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="field full">
+          <label for="situation">현재 상황을 알려주세요</label>
+          <textarea id="situation" name="situation" placeholder="예: 첫 런칭을 준비 중인데 콘텐츠를 어떻게 시작해야 할지 모르겠어요"></textarea>
+        </div>
+        <div class="field full">
+          <label for="goal">희망하는 결과는 무엇인가요?</label>
+          <textarea id="goal" name="goal" placeholder="예: 30일 안에 발행 가능한 콘텐츠 구조를 갖고 싶어요"></textarea>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" id="consultation-submit">상담 신청하기</button>
+      <div id="consultation-success">접수 완료! 24시간 내 연락드리겠습니다.</div>
+      <div id="consultation-error">접수 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.</div>
+    </form>
+  </div>
+</section>
+
+<section class="ps">
+  <div class="wrap">
+    <p>P.S. 지금 시작하지 않으면, 한 달 후에도 같은 고민을 하고 있을 확률이 높습니다. 딱 30일, 이번엔 구조부터 잡아보세요.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 첫 런칭을 위한 30일 챌린지. All rights reserved.</span>
+    <span class="mono">ontheway@gmail.com · 010-2345-7415</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+  // Supabase anon key는 RLS로 보호되는 공개용 키라 클라이언트에 그대로 사용합니다.
+  var SUPABASE_URL = 'https://smivqeepvgoncavcyqfk.supabase.co';
+  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtaXZxZWVwdmdvbmNhdmN5cWZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzMzAyNjgsImV4cCI6MjEwMTkwNjI2OH0.a1HbVI2NtYp5UpHePxmE88jjTporVtXyHGODW08UtD8';
+  var supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  var form = document.getElementById('consultationForm');
+  var submitBtn = document.getElementById('consultation-submit');
+  var successBox = document.getElementById('consultation-success');
+  var errorBox = document.getElementById('consultation-error');
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    successBox.style.display = 'none';
+    errorBox.style.display = 'none';
+    submitBtn.disabled = true;
+
+    var { error } = await supabaseClient.from('consultations').insert({
+      name: form.name.value,
+      phone: form.phone.value,
+      email: form.email.value,
+      situation: form.situation.value,
+      goal: form.goal.value,
+    });
+
+    submitBtn.disabled = false;
+
+    if (error) {
+      console.error(error);
+      errorBox.style.display = 'block';
+      return;
+    }
+
+    successBox.style.display = 'block';
+    form.reset();
+  });
+</script>
+
+</body>
+</html>
