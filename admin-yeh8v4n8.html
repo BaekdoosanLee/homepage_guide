@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>상담 신청 관리</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFFFF;--bg-alt:#F7F7F5;--border:#E4E3DF;--border-strong:#CFCECA;
+    --text:#141414;--text-secondary:#6B6A66;--text-muted:#9B9A96;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',sans-serif;color:var(--text);background:var(--bg-alt);line-height:1.6;-webkit-font-smoothing:antialiased;}
+  h1,h2{font-family:'Space Grotesk',sans-serif;font-weight:500;letter-spacing:-0.01em;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  a{color:inherit;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+
+  /* login */
+  #login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;}
+  .login-box{width:100%;max-width:360px;padding:40px;background:#fff;border:0.5px solid var(--border);border-radius:10px;}
+  .login-box h1{font-size:20px;margin-bottom:24px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:13px;font-weight:500;margin-bottom:6px;}
+  .field input{width:100%;padding:11px 13px;font-size:14px;border:0.5px solid var(--border-strong);border-radius:6px;background:#fff;color:var(--text);}
+  .field input:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px rgba(20,20,20,0.08);}
+  .btn{display:inline-block;padding:11px 20px;font-size:14px;font-weight:500;border-radius:6px;border:0.5px solid var(--text);background:var(--text);color:#fff;cursor:pointer;transition:background-color 0.15s ease, transform 0.1s ease;width:100%;text-align:center;}
+  .btn:hover{background:#000;}
+  .btn:focus-visible{outline:none;box-shadow:0 0 0 2px #fff,0 0 0 4px var(--text);}
+  .btn:active{transform:scale(0.98);}
+  .btn:disabled{opacity:0.5;cursor:not-allowed;}
+  .btn-ghost{background:transparent;color:var(--text-secondary);border-color:var(--border-strong);width:auto;padding:8px 14px;font-size:13px;}
+  .btn-ghost:hover{background:var(--bg-alt);}
+  #login-error{display:none;margin-top:14px;padding:12px 14px;background:#FBEDEA;border:0.5px solid #EFC0B5;border-radius:6px;font-size:13px;color:#A13C24;}
+
+  /* dashboard */
+  #dashboard{display:none;}
+  header{background:#fff;border-bottom:0.5px solid var(--border);}
+  header .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;}
+  header h1{font-size:16px;}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:32px 0;}
+  .stat-card{background:#fff;border:0.5px solid var(--border);border-radius:8px;padding:20px 22px;}
+  .stat-card .label{font-size:12px;color:var(--text-muted);letter-spacing:0.04em;}
+  .stat-card .value{font-family:'Space Grotesk',sans-serif;font-size:28px;margin-top:8px;}
+
+  .table-box{background:#fff;border:0.5px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:48px;}
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  th{text-align:left;padding:12px 16px;background:var(--bg-alt);font-size:12px;color:var(--text-muted);font-weight:500;letter-spacing:0.03em;border-bottom:0.5px solid var(--border);}
+  td{padding:14px 16px;border-bottom:0.5px solid var(--border);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  .status-badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:12px;font-family:'IBM Plex Mono',monospace;}
+  .status-pending{background:#FBF1EA;color:#B8622E;}
+  .status-done{background:#EFF7EE;color:#2E6B2A;}
+  .row-detail{font-size:13px;color:var(--text-secondary);margin-top:6px;max-width:360px;}
+  .row-detail b{color:var(--text);}
+  .link-btn{background:none;border:none;color:var(--text-secondary);font-size:13px;cursor:pointer;text-decoration:underline;padding:0;}
+  .link-btn:hover{color:var(--text);}
+  #empty-state{padding:48px;text-align:center;color:var(--text-muted);font-size:14px;}
+  #loading-state{padding:48px;text-align:center;color:var(--text-muted);font-size:14px;}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <form class="login-box" id="loginForm">
+    <h1>상담 신청 관리</h1>
+    <div class="field">
+      <label for="login-email">이메일</label>
+      <input type="email" id="login-email" required autocomplete="username">
+    </div>
+    <div class="field">
+      <label for="login-password">비밀번호</label>
+      <input type="password" id="login-password" required autocomplete="current-password">
+    </div>
+    <button type="submit" class="btn" id="login-submit">로그인</button>
+    <div id="login-error">이메일 또는 비밀번호가 올바르지 않습니다.</div>
+  </form>
+</div>
+
+<div id="dashboard">
+  <header>
+    <div class="wrap">
+      <h1>상담 신청 관리</h1>
+      <button class="btn btn-ghost" id="logout-btn">로그아웃</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="stats">
+      <div class="stat-card">
+        <div class="label mono">TOTAL</div>
+        <div class="value" id="stat-total">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label mono">TODAY</div>
+        <div class="value" id="stat-today">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label mono">PENDING</div>
+        <div class="value" id="stat-pending">0</div>
+      </div>
+    </div>
+
+    <div class="table-box">
+      <div id="loading-state">불러오는 중...</div>
+      <table id="consult-table" style="display:none;">
+        <thead>
+          <tr>
+            <th>이름</th>
+            <th>연락처 / 이메일</th>
+            <th>상태</th>
+            <th>접수일</th>
+            <th>상세</th>
+          </tr>
+        </thead>
+        <tbody id="consult-tbody"></tbody>
+      </table>
+      <div id="empty-state" style="display:none;">아직 접수된 상담 신청이 없습니다.</div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+  var SUPABASE_URL = 'https://smivqeepvgoncavcyqfk.supabase.co';
+  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtaXZxZWVwdmdvbmNhdmN5cWZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzMzAyNjgsImV4cCI6MjEwMTkwNjI2OH0.a1HbVI2NtYp5UpHePxmE88jjTporVtXyHGODW08UtD8';
+  var supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  var loginScreen = document.getElementById('login-screen');
+  var dashboard = document.getElementById('dashboard');
+  var loginForm = document.getElementById('loginForm');
+  var loginError = document.getElementById('login-error');
+  var loginSubmit = document.getElementById('login-submit');
+
+  // 세션 타임아웃: 20분 미조작 시 자동 로그아웃
+  var IDLE_LIMIT_MS = 20 * 60 * 1000;
+  var idleTimer = null;
+  function resetIdleTimer() {
+    if (idleTimer) clearTimeout(idleTimer);
+    idleTimer = setTimeout(async function () {
+      await supabaseClient.auth.signOut();
+      location.reload();
+    }, IDLE_LIMIT_MS);
+  }
+  ['click', 'keydown', 'mousemove', 'scroll'].forEach(function (evt) {
+    document.addEventListener(evt, resetIdleTimer, { passive: true });
+  });
+
+  async function showDashboard() {
+    loginScreen.style.display = 'none';
+    dashboard.style.display = 'block';
+    resetIdleTimer();
+    await loadConsultations();
+  }
+
+  function showLogin() {
+    loginScreen.style.display = 'flex';
+    dashboard.style.display = 'none';
+  }
+
+  loginForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    loginError.style.display = 'none';
+    loginSubmit.disabled = true;
+    var email = document.getElementById('login-email').value;
+    var password = document.getElementById('login-password').value;
+    var { error } = await supabaseClient.auth.signInWithPassword({ email: email, password: password });
+    loginSubmit.disabled = false;
+    if (error) {
+      loginError.style.display = 'block';
+      return;
+    }
+    await showDashboard();
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', async function () {
+    await supabaseClient.auth.signOut();
+    showLogin();
+  });
+
+  async function loadConsultations() {
+    var tbody = document.getElementById('consult-tbody');
+    var table = document.getElementById('consult-table');
+    var loading = document.getElementById('loading-state');
+    var empty = document.getElementById('empty-state');
+
+    var { data, error } = await supabaseClient
+      .from('consultations')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    loading.style.display = 'none';
+
+    if (error || !data || data.length === 0) {
+      empty.style.display = 'block';
+      updateStats([]);
+      return;
+    }
+
+    table.style.display = 'table';
+    tbody.innerHTML = '';
+    data.forEach(function (row) {
+      tbody.appendChild(renderRow(row));
+    });
+    updateStats(data);
+  }
+
+  function renderRow(row) {
+    var tr = document.createElement('tr');
+    var created = new Date(row.created_at);
+    var dateStr = created.toLocaleDateString('ko-KR') + ' ' + created.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+    var isDone = row.status === 'done';
+
+    tr.innerHTML =
+      '<td>' + escapeHtml(row.name) + '</td>' +
+      '<td>' + escapeHtml(row.phone || '') + '<br><span style="color:var(--text-muted)">' + escapeHtml(row.email || '') + '</span></td>' +
+      '<td><span class="status-badge ' + (isDone ? 'status-done' : 'status-pending') + '" data-role="status">' + (isDone ? '완료' : '대기중') + '</span></td>' +
+      '<td class="mono" style="font-size:12px;">' + dateStr + '</td>' +
+      '<td><button class="link-btn" data-role="toggle">' + (isDone ? '대기중으로' : '완료로 변경') + '</button> · <button class="link-btn" data-role="detail">상세보기</button>' +
+      '<div class="row-detail" data-role="detail-box" style="display:none;">' +
+        '<div><b>현재 상황:</b> ' + escapeHtml(row.situation || '-') + '</div>' +
+        '<div style="margin-top:6px;"><b>희망 결과:</b> ' + escapeHtml(row.goal || '-') + '</div>' +
+      '</div></td>';
+
+    tr.querySelector('[data-role="detail"]').addEventListener('click', function () {
+      var box = tr.querySelector('[data-role="detail-box"]');
+      box.style.display = box.style.display === 'none' ? 'block' : 'none';
+    });
+
+    tr.querySelector('[data-role="toggle"]').addEventListener('click', async function (e) {
+      var btn = e.target;
+      btn.disabled = true;
+      var newStatus = isDone ? 'pending' : 'done';
+      var { error } = await supabaseClient.from('consultations').update({ status: newStatus }).eq('id', row.id);
+      if (!error) {
+        row.status = newStatus;
+        tr.replaceWith(renderRow(row));
+      }
+      btn.disabled = false;
+    });
+
+    return tr;
+  }
+
+  function updateStats(rows) {
+    var today = new Date().toDateString();
+    document.getElementById('stat-total').textContent = rows.length;
+    document.getElementById('stat-today').textContent = rows.filter(function (r) {
+      return new Date(r.created_at).toDateString() === today;
+    }).length;
+    document.getElementById('stat-pending').textContent = rows.filter(function (r) {
+      return r.status !== 'done';
+    }).length;
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  (async function init() {
+    var { data } = await supabaseClient.auth.getSession();
+    if (data.session) {
+      await showDashboard();
+    } else {
+      showLogin();
+    }
+  })();
+</script>
+
+</body>
+</html>
